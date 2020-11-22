@@ -7,19 +7,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.stream.StreamSupport;
-
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-
 import exception.CensusAnalyserException;
 import pojo.IndiaCensusCSV;
 import pojo.StateCodeCSV;
 
 public class CensusAnalyser {
-
 	public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException, IOException {
-		// TODO Auto-generated method stub
-
+		
 		String[] csvFile = csvFilePath.split("[.]");
 		if (!csvFile[1].equals("csv")) {
 			throw new CensusAnalyserException(CensusAnalyserException.ExceptionType.WRONG_FILE_TYPE);
@@ -30,13 +26,9 @@ public class CensusAnalyser {
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
 			Iterator<IndiaCensusCSV> censusCsvIterator = getCSVFileIterator(reader,IndiaCensusCSV.class );
-			Iterable<IndiaCensusCSV> csvIterable = () -> censusCsvIterator;
-			int numOfEntries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
-			return numOfEntries;
+			return this.getCount(censusCsvIterator);
 		} catch (IOException e) {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_FILE_PATH);
-		} catch (IllegalStateException e) {
-			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_FILE_TYPE);
 		}
 
 	}
@@ -84,13 +76,9 @@ public class CensusAnalyser {
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
 			Iterator<StateCodeCSV> censusCsvIterator = getCSVFileIterator(reader,StateCodeCSV.class );
-			Iterable<StateCodeCSV> csvIterable = () -> censusCsvIterator;
-			int numOfEntries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
-			return numOfEntries;
+			return this.getCount(censusCsvIterator);
 		} catch (IOException e) {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_FILE_PATH);
-		} catch (IllegalStateException e) {
-			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_FILE_TYPE);
 		}
 	}
 
@@ -124,7 +112,7 @@ public class CensusAnalyser {
 
 	}
 
-	private <E> Iterator<E> getCSVFileIterator(Reader reader, Class csvClass) throws CensusAnalyserException {
+	private <E> Iterator<E> getCSVFileIterator(Reader reader, Class<E> csvClass) throws CensusAnalyserException {
 		try {
 			CsvToBeanBuilder<E> csvToBeanBuilder = new CsvToBeanBuilder<>(reader);
 			csvToBeanBuilder.withType(csvClass);
@@ -135,6 +123,13 @@ public class CensusAnalyser {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_FILE_TYPE);
 		}
 
+	}
+	
+	private <E> int getCount(Iterator<E> iterator) {
+		int numOfEntries = 0;
+		Iterable<E> csvIterable = () -> iterator;
+		numOfEntries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
+		return numOfEntries;
 	}
 
 }

@@ -9,9 +9,12 @@ import java.util.Iterator;
 import java.util.stream.StreamSupport;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+
+import builder.OpenCSVBuilder;
 import exception.CensusAnalyserException;
 import pojo.IndiaCensusCSV;
 import pojo.StateCodeCSV;
+import builder.OpenCSVBuilder;
 
 public class CensusAnalyser {
 	public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException, IOException {
@@ -25,7 +28,8 @@ public class CensusAnalyser {
 
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
-			Iterator<IndiaCensusCSV> censusCsvIterator = getCSVFileIterator(reader,IndiaCensusCSV.class );
+			OpenCSVBuilder openCSV = new OpenCSVBuilder();
+			Iterator<IndiaCensusCSV> censusCsvIterator = openCSV.getCSVFileIterator(reader,IndiaCensusCSV.class );
 			return this.getCount(censusCsvIterator);
 		} catch (IOException e) {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_FILE_PATH);
@@ -75,7 +79,8 @@ public class CensusAnalyser {
 		checkHeaderStateCode(csvFilePath);
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
-			Iterator<StateCodeCSV> censusCsvIterator = getCSVFileIterator(reader,StateCodeCSV.class );
+			OpenCSVBuilder openCSV = new OpenCSVBuilder();
+			Iterator<StateCodeCSV> censusCsvIterator =  openCSV.getCSVFileIterator(reader,StateCodeCSV.class ); 
 			return this.getCount(censusCsvIterator);
 		} catch (IOException e) {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_FILE_PATH);
@@ -112,18 +117,7 @@ public class CensusAnalyser {
 
 	}
 
-	private <E> Iterator<E> getCSVFileIterator(Reader reader, Class<E> csvClass) throws CensusAnalyserException {
-		try {
-			CsvToBeanBuilder<E> csvToBeanBuilder = new CsvToBeanBuilder<>(reader);
-			csvToBeanBuilder.withType(csvClass);
-			csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
-			CsvToBean<E> csvToBean = csvToBeanBuilder.build();
-			return csvToBean.iterator();
-		} catch (IllegalStateException e) {
-			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_FILE_TYPE);
-		}
-
-	}
+	
 	
 	private <E> int getCount(Iterator<E> iterator) {
 		int numOfEntries = 0;

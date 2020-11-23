@@ -1,11 +1,9 @@
 package com.IndiaCensusAnalyser;
 
 import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import builder.CSVException;
 public class CensusAnalyserTest {
 

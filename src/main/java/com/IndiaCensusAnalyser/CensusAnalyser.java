@@ -6,17 +6,13 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.StreamSupport;
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
-
 import builder.CSVBuilderFactory;
 import builder.CSVException;
 import builder.ICSVBuilder;
-import builder.OpenCSVBuilder;
 import pojo.IndiaCensusCSV;
 import pojo.StateCodeCSV;
-import builder.OpenCSVBuilder;
 
 public class CensusAnalyser {
 	public int loadIndiaCensusData(String csvFilePath) throws CSVException, IOException {
@@ -31,8 +27,8 @@ public class CensusAnalyser {
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
 			ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
-			Iterator<IndiaCensusCSV> censusCsvIterator = csvBuilder.getCSVFileIterator(reader,IndiaCensusCSV.class);
-			return this.getCount(censusCsvIterator);
+			List<IndiaCensusCSV> censusCsvList = csvBuilder.getCSVFileList(reader,IndiaCensusCSV.class);
+			return censusCsvList.size();
 		} catch (IOException e) {
 			throw new CSVException(e.getMessage(), CSVException.ExceptionType.WRONG_FILE_PATH);
 		}

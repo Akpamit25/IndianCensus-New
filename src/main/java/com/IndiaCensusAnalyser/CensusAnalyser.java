@@ -11,8 +11,9 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
 import builder.CSVBuilderFactory;
+import builder.CSVException;
+import builder.ICSVBuilder;
 import builder.OpenCSVBuilder;
-import exception.CSVException;
 import pojo.IndiaCensusCSV;
 import pojo.StateCodeCSV;
 import builder.OpenCSVBuilder;
@@ -29,8 +30,8 @@ public class CensusAnalyser {
 
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
-
-			Iterator<IndiaCensusCSV> censusCsvIterator = CSVBuilderFactory.createCSVBuilder().getCSVFileIterator(reader,IndiaCensusCSV.class);
+			ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
+			Iterator<IndiaCensusCSV> censusCsvIterator = csvBuilder.getCSVFileIterator(reader,IndiaCensusCSV.class);
 			return this.getCount(censusCsvIterator);
 		} catch (IOException e) {
 			throw new CSVException(e.getMessage(), CSVException.ExceptionType.WRONG_FILE_PATH);
@@ -79,7 +80,8 @@ public class CensusAnalyser {
 		checkHeaderStateCode(csvFilePath);
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
-			Iterator<StateCodeCSV> censusCsvIterator = CSVBuilderFactory.createCSVBuilder().getCSVFileIterator(reader,StateCodeCSV.class);
+			ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
+			Iterator<StateCodeCSV> censusCsvIterator = csvBuilder.getCSVFileIterator(reader,StateCodeCSV.class);
 			return this.getCount(censusCsvIterator);
 		} catch (IOException e) {
 			throw new CSVException(e.getMessage(), CSVException.ExceptionType.WRONG_FILE_PATH);

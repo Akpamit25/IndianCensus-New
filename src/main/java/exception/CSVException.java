@@ -1,6 +1,6 @@
 package exception;
 
-public class CensusAnalyserException extends Exception {
+public class CSVException extends Exception {
 
 	public enum ExceptionType {
 		WRONG_FILE_PATH, WRONG_FILE_TYPE, WRONG_DELIMITER_TYPE, WRONG_HEADER;
@@ -8,12 +8,12 @@ public class CensusAnalyserException extends Exception {
 
 	ExceptionType type;
 
-	public CensusAnalyserException(ExceptionType type) {
+	public CSVException(ExceptionType type) {
 
 		this.type = type;
 	}
 
-	public CensusAnalyserException(String message, ExceptionType type) {
+	public CSVException(String message, ExceptionType type) {
 		super(message);
 		this.type = type;
 
